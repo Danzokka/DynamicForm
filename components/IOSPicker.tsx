@@ -1,15 +1,15 @@
-import React, { useState } from 'react';
+import { useThemeColor } from "@/hooks/useThemeColor";
+import React, { useState } from "react";
 import {
-  View,
-  Text,
-  TouchableOpacity,
+  Dimensions,
   Modal,
-  StyleSheet,
   Platform,
   ScrollView,
-  Dimensions,
-} from 'react-native';
-import { useThemeColor } from '@/hooks/useThemeColor';
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 interface PickerItem {
   label: string;
@@ -36,12 +36,12 @@ export default function IOSPicker({
   error = false,
 }: IOSPickerProps) {
   const [modalVisible, setModalVisible] = useState(false);
-  
-  const backgroundColor = useThemeColor({}, 'background');
-  const textColor = useThemeColor({}, 'text');
-  const tintColor = useThemeColor({}, 'tint');
 
-  const selectedItem = items.find(item => item.value === selectedValue);
+  const backgroundColor = useThemeColor({}, "background");
+  const textColor = useThemeColor({}, "text");
+  const tintColor = useThemeColor({}, "tint");
+
+  const selectedItem = items.find((item) => item.value === selectedValue);
   const displayText = selectedItem ? selectedItem.label : placeholder;
 
   const handleSelection = (value: string) => {
@@ -54,8 +54,8 @@ export default function IOSPicker({
       <TouchableOpacity
         style={[
           styles.pickerButton,
-          { 
-            borderColor: error ? 'red' : '#ccc',
+          {
+            borderColor: error ? "red" : "#ccc",
             backgroundColor: backgroundColor,
           },
           style,
@@ -66,8 +66,8 @@ export default function IOSPicker({
         <Text
           style={[
             styles.pickerText,
-            { 
-              color: selectedValue ? textColor : '#999',
+            {
+              color: selectedValue ? textColor : "#999",
               opacity: disabled ? 0.5 : 1,
             },
           ]}
@@ -99,7 +99,7 @@ export default function IOSPicker({
               </Text>
               <View style={styles.placeholder} />
             </View>
-            
+
             <ScrollView style={styles.optionsList}>
               {items.map((item) => (
                 <TouchableOpacity
@@ -107,7 +107,7 @@ export default function IOSPicker({
                   style={[
                     styles.optionItem,
                     selectedValue === item.value && {
-                      backgroundColor: tintColor + '20',
+                      backgroundColor: tintColor + "20",
                     },
                   ]}
                   onPress={() => handleSelection(item.value)}
@@ -115,9 +115,10 @@ export default function IOSPicker({
                   <Text
                     style={[
                       styles.optionText,
-                      { 
+                      {
                         color: textColor,
-                        fontWeight: selectedValue === item.value ? 'bold' : 'normal',
+                        fontWeight:
+                          selectedValue === item.value ? "bold" : "normal",
                       },
                     ]}
                   >
@@ -138,16 +139,16 @@ export default function IOSPicker({
   );
 }
 
-const { height } = Dimensions.get('window');
+const { height } = Dimensions.get("window");
 
 const styles = StyleSheet.create({
   pickerButton: {
     borderWidth: 1,
     borderRadius: 8,
     padding: 12,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     minHeight: 50,
   },
   pickerText: {
@@ -160,22 +161,22 @@ const styles = StyleSheet.create({
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'flex-end',
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "flex-end",
   },
   modalContent: {
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     maxHeight: height * 0.7,
-    paddingBottom: Platform.OS === 'ios' ? 34 : 20,
+    paddingBottom: Platform.OS === "ios" ? 34 : 20,
   },
   modalHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     padding: 20,
     borderBottomWidth: 1,
-    borderBottomColor: '#e0e0e0',
+    borderBottomColor: "#e0e0e0",
   },
   cancelButton: {
     paddingVertical: 8,
@@ -183,13 +184,13 @@ const styles = StyleSheet.create({
   },
   cancelText: {
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   modalTitle: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     flex: 1,
-    textAlign: 'center',
+    textAlign: "center",
   },
   placeholder: {
     width: 60, // Same width as cancel button for centering
@@ -198,12 +199,12 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   optionItem: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     padding: 16,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: '#e0e0e0',
+    borderBottomColor: "#e0e0e0",
   },
   optionText: {
     fontSize: 16,
@@ -211,6 +212,6 @@ const styles = StyleSheet.create({
   },
   checkmark: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
 });

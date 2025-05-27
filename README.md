@@ -33,6 +33,7 @@ Este projeto demonstra um exemplo completo de formulário dinâmico com as segui
 ## 📱 Como usar
 
 1. **Aba Formulário**: Preencha os dados do usuário
+
    - Selecione um estado para carregar as cidades
    - Adicione uma foto clicando no placeholder
    - Os dados são salvos automaticamente no AsyncStorage

@@ -1,14 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
-  View,
-  Text,
-  TouchableOpacity,
+  Dimensions,
   Modal,
-  StyleSheet,
   Platform,
   ScrollView,
-  Dimensions,
-} from 'react-native';
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 interface PickerItem {
   label: string;
@@ -35,8 +35,8 @@ const CustomPicker: React.FC<CustomPickerProps> = ({
   error = false,
 }) => {
   const [modalVisible, setModalVisible] = useState(false);
-  
-  const selectedItem = items.find(item => item.value === selectedValue);
+
+  const selectedItem = items.find((item) => item.value === selectedValue);
   const displayText = selectedItem ? selectedItem.label : placeholder;
 
   const handleSelection = (value: string) => {
@@ -49,9 +49,9 @@ const CustomPicker: React.FC<CustomPickerProps> = ({
       <TouchableOpacity
         style={[
           styles.pickerButton,
-          { 
-            borderColor: error ? 'red' : '#ccc',
-            backgroundColor: 'white',
+          {
+            borderColor: error ? "red" : "#ccc",
+            backgroundColor: "white",
           },
           style,
         ]}
@@ -61,15 +61,15 @@ const CustomPicker: React.FC<CustomPickerProps> = ({
         <Text
           style={[
             styles.pickerText,
-            { 
-              color: selectedValue ? '#000' : '#999',
+            {
+              color: selectedValue ? "#000" : "#999",
               opacity: disabled ? 0.5 : 1,
             },
           ]}
         >
           {displayText}
         </Text>
-        <Text style={[styles.arrow, { color: '#000' }]}>▼</Text>
+        <Text style={[styles.arrow, { color: "#000" }]}>▼</Text>
       </TouchableOpacity>
 
       <Modal
@@ -79,22 +79,22 @@ const CustomPicker: React.FC<CustomPickerProps> = ({
         onRequestClose={() => setModalVisible(false)}
       >
         <View style={styles.modalOverlay}>
-          <View style={[styles.modalContent, { backgroundColor: 'white' }]}>
+          <View style={[styles.modalContent, { backgroundColor: "white" }]}>
             <View style={styles.modalHeader}>
               <TouchableOpacity
                 onPress={() => setModalVisible(false)}
                 style={styles.cancelButton}
               >
-                <Text style={[styles.cancelText, { color: '#007AFF' }]}>
+                <Text style={[styles.cancelText, { color: "#007AFF" }]}>
                   Cancelar
                 </Text>
               </TouchableOpacity>
-              <Text style={[styles.modalTitle, { color: '#000' }]}>
+              <Text style={[styles.modalTitle, { color: "#000" }]}>
                 {placeholder}
               </Text>
               <View style={styles.placeholder} />
             </View>
-            
+
             <ScrollView style={styles.optionsList}>
               {items.map((item) => (
                 <TouchableOpacity
@@ -102,7 +102,7 @@ const CustomPicker: React.FC<CustomPickerProps> = ({
                   style={[
                     styles.optionItem,
                     selectedValue === item.value && {
-                      backgroundColor: '#007AFF20',
+                      backgroundColor: "#007AFF20",
                     },
                   ]}
                   onPress={() => handleSelection(item.value)}
@@ -110,16 +110,17 @@ const CustomPicker: React.FC<CustomPickerProps> = ({
                   <Text
                     style={[
                       styles.optionText,
-                      { 
-                        color: '#000',
-                        fontWeight: selectedValue === item.value ? 'bold' : 'normal',
+                      {
+                        color: "#000",
+                        fontWeight:
+                          selectedValue === item.value ? "bold" : "normal",
                       },
                     ]}
                   >
                     {item.label}
                   </Text>
                   {selectedValue === item.value && (
-                    <Text style={[styles.checkmark, { color: '#007AFF' }]}>
+                    <Text style={[styles.checkmark, { color: "#007AFF" }]}>
                       ✓
                     </Text>
                   )}
@@ -133,16 +134,16 @@ const CustomPicker: React.FC<CustomPickerProps> = ({
   );
 };
 
-const { height } = Dimensions.get('window');
+const { height } = Dimensions.get("window");
 
 const styles = StyleSheet.create({
   pickerButton: {
     borderWidth: 1,
     borderRadius: 8,
     padding: 12,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     minHeight: 50,
   },
   pickerText: {
@@ -155,22 +156,22 @@ const styles = StyleSheet.create({
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'flex-end',
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "flex-end",
   },
   modalContent: {
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     maxHeight: height * 0.7,
-    paddingBottom: Platform.OS === 'ios' ? 34 : 20,
+    paddingBottom: Platform.OS === "ios" ? 34 : 20,
   },
   modalHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     padding: 20,
     borderBottomWidth: 1,
-    borderBottomColor: '#e0e0e0',
+    borderBottomColor: "#e0e0e0",
   },
   cancelButton: {
     paddingVertical: 8,
@@ -178,13 +179,13 @@ const styles = StyleSheet.create({
   },
   cancelText: {
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   modalTitle: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     flex: 1,
-    textAlign: 'center',
+    textAlign: "center",
   },
   placeholder: {
     width: 60,
@@ -193,12 +194,12 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   optionItem: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     padding: 16,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: '#e0e0e0',
+    borderBottomColor: "#e0e0e0",
   },
   optionText: {
     fontSize: 16,
@@ -206,7 +207,7 @@ const styles = StyleSheet.create({
   },
   checkmark: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
 });
 

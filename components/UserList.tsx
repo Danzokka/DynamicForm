@@ -1,17 +1,16 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { useThemeColor } from "@/hooks/useThemeColor";
+import { StorageService } from "@/services/storageService";
+import { useFocusEffect } from "@react-navigation/native";
+import React, { useCallback, useState } from "react";
 import {
-  View,
-  Text,
+  Alert,
   FlatList,
-  StyleSheet,
-  TouchableOpacity,
   Image,
   RefreshControl,
-  Alert,
-} from 'react-native';
-import { useFocusEffect } from '@react-navigation/native';
-import { StorageService } from '@/services/storageService';
-import { useThemeColor } from '@/hooks/useThemeColor';
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 
 interface User {
   id: string;
@@ -29,9 +28,9 @@ export default function UserList() {
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
 
-  const backgroundColor = useThemeColor({}, 'background');
-  const textColor = useThemeColor({}, 'text');
-  const tintColor = useThemeColor({}, 'tint');
+  const backgroundColor = useThemeColor({}, "background");
+  const textColor = useThemeColor({}, "text");
+  const tintColor = useThemeColor({}, "tint");
 
   const loadUsers = async (isRefresh = false) => {
     try {
@@ -39,8 +38,8 @@ export default function UserList() {
       const usersData = await StorageService.getAllUsers();
       setUsers(usersData.reverse()); // Show newest first
     } catch (error) {
-      console.error('Erro ao carregar usuários:', error);
-      Alert.alert('Erro', 'Não foi possível carregar a lista de usuários');
+      console.error("Erro ao carregar usuários:", error);
+      Alert.alert("Erro", "Não foi possível carregar a lista de usuários");
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -61,54 +60,67 @@ export default function UserList() {
   const formatDate = (dateString: string) => {
     try {
       const date = new Date(dateString);
-      return date.toLocaleString('pt-BR', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
+      return date.toLocaleString("pt-BR", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
       });
     } catch {
-      return 'Data inválida';
+      return "Data inválida";
     }
   };
 
   const getInitials = (name: string) => {
     return name
-      .split(' ')
-      .map(word => word.charAt(0))
-      .join('')
+      .split(" ")
+      .map((word) => word.charAt(0))
+      .join("")
       .substring(0, 2)
       .toUpperCase();
   };
 
   const renderUser = ({ item }: { item: User }) => (
-    <View style={[styles.userCard, { backgroundColor: backgroundColor, borderColor: '#e0e0e0' }]}>
+    <View
+      style={[
+        styles.userCard,
+        { backgroundColor: backgroundColor, borderColor: "#e0e0e0" },
+      ]}
+    >
       <View style={styles.userHeader}>
         <View style={styles.avatarContainer}>
           {item.image ? (
             <Image source={{ uri: item.image }} style={styles.avatar} />
           ) : (
-            <View style={[styles.avatarPlaceholder, { backgroundColor: tintColor }]}>
+            <View
+              style={[styles.avatarPlaceholder, { backgroundColor: tintColor }]}
+            >
               <Text style={styles.avatarText}>{getInitials(item.name)}</Text>
             </View>
           )}
         </View>
         <View style={styles.userInfo}>
-          <Text style={[styles.userName, { color: textColor }]}>{item.name}</Text>
-          <Text style={[styles.userEmail, { color: '#666' }]}>{item.email}</Text>
-          <Text style={[styles.userPhone, { color: '#666' }]}>{item.phone}</Text>
+          <Text style={[styles.userName, { color: textColor }]}>
+            {item.name}
+          </Text>
+          <Text style={[styles.userEmail, { color: "#666" }]}>
+            {item.email}
+          </Text>
+          <Text style={[styles.userPhone, { color: "#666" }]}>
+            {item.phone}
+          </Text>
         </View>
       </View>
-      
+
       <View style={styles.locationContainer}>
         <Text style={[styles.locationText, { color: textColor }]}>
           📍 Estado: {item.state} | Cidade: {item.city}
         </Text>
       </View>
-      
+
       <View style={styles.dateContainer}>
-        <Text style={[styles.dateText, { color: '#888' }]}>
+        <Text style={[styles.dateText, { color: "#888" }]}>
           Cadastrado em: {formatDate(item.createdAt)}
         </Text>
       </View>
@@ -120,7 +132,7 @@ export default function UserList() {
       <Text style={[styles.emptyText, { color: textColor }]}>
         Nenhum usuário cadastrado ainda
       </Text>
-      <Text style={[styles.emptySubtext, { color: '#666' }]}>
+      <Text style={[styles.emptySubtext, { color: "#666" }]}>
         Vá para a aba "Formulário" para cadastrar o primeiro usuário
       </Text>
     </View>
@@ -128,8 +140,10 @@ export default function UserList() {
 
   return (
     <View style={[styles.container, { backgroundColor }]}>
-      <Text style={[styles.title, { color: textColor }]}>Usuários Cadastrados</Text>
-      
+      <Text style={[styles.title, { color: textColor }]}>
+        Usuários Cadastrados
+      </Text>
+
       <FlatList
         data={users}
         renderItem={renderUser}
@@ -156,8 +170,8 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 24,
-    fontWeight: 'bold',
-    textAlign: 'center',
+    fontWeight: "bold",
+    textAlign: "center",
     marginBottom: 20,
   },
   listContainer: {
@@ -168,7 +182,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 16,
     marginBottom: 16,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: 2,
@@ -178,8 +192,8 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   userHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginBottom: 12,
   },
   avatarContainer: {
@@ -194,20 +208,20 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: 30,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   avatarText: {
-    color: 'white',
+    color: "white",
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   userInfo: {
     flex: 1,
   },
   userName: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 4,
   },
   userEmail: {
@@ -222,32 +236,32 @@ const styles = StyleSheet.create({
   },
   locationText: {
     fontSize: 14,
-    fontStyle: 'italic',
+    fontStyle: "italic",
   },
   dateContainer: {
     borderTopWidth: 1,
-    borderTopColor: '#e0e0e0',
+    borderTopColor: "#e0e0e0",
     paddingTop: 8,
   },
   dateText: {
     fontSize: 12,
-    textAlign: 'right',
+    textAlign: "right",
   },
   emptyContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     paddingHorizontal: 40,
   },
   emptyText: {
     fontSize: 18,
-    fontWeight: '600',
-    textAlign: 'center',
+    fontWeight: "600",
+    textAlign: "center",
     marginBottom: 8,
   },
   emptySubtext: {
     fontSize: 14,
-    textAlign: 'center',
+    textAlign: "center",
     lineHeight: 20,
   },
 });

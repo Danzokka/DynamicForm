@@ -1,10 +1,10 @@
-import React from 'react';
-import { SafeAreaView, StyleSheet } from 'react-native';
-import UserList from '@/components/UserList';
-import { useThemeColor } from '@/hooks/useThemeColor';
+import UserList from "@/components/UserList";
+import { useThemeColor } from "@/hooks/useThemeColor";
+import React from "react";
+import { SafeAreaView, StyleSheet } from "react-native";
 
 export default function TabTwoScreen() {
-  const backgroundColor = useThemeColor({}, 'background');
+  const backgroundColor = useThemeColor({}, "background");
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor }]}>

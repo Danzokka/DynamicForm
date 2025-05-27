@@ -1,10 +1,10 @@
-import { useQuery } from '@tanstack/react-query';
-import { IBGEService, State, City } from '@/services/ibgeService';
+import { IBGEService } from "@/services/ibgeService";
+import { useQuery } from "@tanstack/react-query";
 
 // Hook para buscar estados
 export const useStates = () => {
   return useQuery({
-    queryKey: ['states'],
+    queryKey: ["states"],
     queryFn: IBGEService.getStates,
     staleTime: 24 * 60 * 60 * 1000, // 24 hours - estados raramente mudam
     gcTime: 24 * 60 * 60 * 1000, // 24 hours
@@ -16,7 +16,7 @@ export const useStates = () => {
 // Hook para buscar cidades por estado
 export const useCities = (stateId: string | undefined) => {
   return useQuery({
-    queryKey: ['cities', stateId],
+    queryKey: ["cities", stateId],
     queryFn: () => IBGEService.getCitiesByState(stateId!),
     enabled: !!stateId, // Só executa se tiver stateId
     staleTime: 24 * 60 * 60 * 1000, // 24 hours - cidades raramente mudam
