@@ -1,50 +1,81 @@
-# Welcome to your Expo app 👋
+# Formulário Dinâmico com React Native e Expo
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Este projeto demonstra um exemplo completo de formulário dinâmico com as seguintes funcionalidades:
 
-## Get started
+## 🚀 Funcionalidades
 
-1. Install dependencies
+- **Formulário com validação Zod**: Validação de campos em tempo real
+- **Integração com API do IBGE**: Carregamento dinâmico de estados e cidades
+- **Seletor de imagem**: Captura de foto ou seleção da galeria
+- **AsyncStorage**: Persistência de dados local
+- **Lista de usuários**: Visualização dos dados salvos
+- **Suporte a modo escuro/claro**: Interface adaptativa
 
-   ```bash
-   npm install
-   ```
+## 📋 Campos do Formulário
 
-2. Start the app
+- Nome (obrigatório)
+- Email (obrigatório)
+- Telefone (obrigatório)
+- Estado (carregado da API do IBGE)
+- Cidade (carregado dinamicamente baseado no estado)
+- Foto do perfil (opcional)
 
-   ```bash
-   npx expo start
-   ```
+## 🛠️ Tecnologias Utilizadas
 
-In the output, you'll find options to open the app in a
+- React Native com Expo
+- TypeScript
+- Zod para validação
+- React Hook Form
+- AsyncStorage
+- Expo Image Picker
+- API do IBGE para estados e cidades
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+## 📱 Como usar
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+1. **Aba Formulário**: Preencha os dados do usuário
+   - Selecione um estado para carregar as cidades
+   - Adicione uma foto clicando no placeholder
+   - Os dados são salvos automaticamente no AsyncStorage
 
-## Get a fresh project
+2. **Aba Usuários**: Visualize todos os usuários cadastrados
+   - Lista com foto, dados pessoais e localização
+   - Puxe para atualizar a lista
 
-When you're ready, run:
+## 🔧 Como executar
 
 ```bash
-npm run reset-project
+npm install
+npm start
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+## 📂 Estrutura do Projeto
 
-## Learn more
+```
+components/
+├── DynamicForm.tsx     # Formulário principal
+├── UserList.tsx        # Lista de usuários
+└── ui/                 # Componentes de UI
 
-To learn more about developing your project with Expo, look at the following resources:
+hooks/
+├── useImagePicker.ts   # Hook para seleção de imagens
+└── useThemeColor.ts    # Hook para cores do tema
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+schemas/
+└── userSchema.ts       # Schema Zod para validação
 
-## Join the community
+services/
+├── ibgeService.ts      # Serviço para API do IBGE
+└── storageService.ts   # Serviço para AsyncStorage
+```
 
-Join our community of developers creating universal apps.
+## 🎨 Features Implementadas
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+- ✅ Formulário dinâmico com Zod
+- ✅ Validação em tempo real
+- ✅ Integração com API do IBGE
+- ✅ Seleção de imagem (galeria/câmera)
+- ✅ Conversão para base64
+- ✅ Persistência com AsyncStorage
+- ✅ Lista dinâmica de usuários
+- ✅ Interface responsiva
+- ✅ Suporte a modo escuro/claro
