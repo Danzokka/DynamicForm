@@ -1,24 +1,24 @@
-import React, { useState, useEffect } from 'react';
+import { useImagePicker } from "@/hooks/useImagePicker";
+import { useThemeColor } from "@/hooks/useThemeColor";
+import { UserFormData, userFormSchema } from "@/schemas/userSchema";
+import { City, IBGEService, State } from "@/services/ibgeService";
+import { StorageService } from "@/services/storageService";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Picker, PickerIOS } from "@react-native-picker/picker";
+import React, { useEffect, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
 import {
-  View,
+  ActivityIndicator,
+  Alert,
+  Image,
+  Platform,
+  ScrollView,
+  StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
-  StyleSheet,
-  ScrollView,
-  Alert,
-  ActivityIndicator,
-  Image,
-  Platform,
-} from 'react-native';
-import { useForm, Controller } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Picker, PickerIOS } from '@react-native-picker/picker';
-import { userFormSchema, UserFormData } from '@/schemas/userSchema';
-import { IBGEService, State, City } from '@/services/ibgeService';
-import { StorageService } from '@/services/storageService';
-import { useImagePicker } from '@/hooks/useImagePicker';
-import { useThemeColor } from '@/hooks/useThemeColor';
+  View,
+} from "react-native";
 
 interface ConditionalPickerProps {
   selectedValue: string;
@@ -39,7 +39,7 @@ const ConditionalPicker: React.FC<ConditionalPickerProps> = ({
     onValueChange(String(itemValue), itemIndex);
   };
 
-  if (Platform.OS === 'ios') {
+  if (Platform.OS === "ios") {
     return (
       <PickerIOS
         selectedValue={selectedValue}
@@ -68,8 +68,11 @@ interface ConditionalPickerItemProps {
   value: string;
 }
 
-const ConditionalPickerItem: React.FC<ConditionalPickerItemProps> = ({ label, value }) => {
-  if (Platform.OS === 'ios') {
+const ConditionalPickerItem: React.FC<ConditionalPickerItemProps> = ({
+  label,
+  value,
+}) => {
+  if (Platform.OS === "ios") {
     return <PickerIOS.Item label={label} value={value} />;
   }
   return <Picker.Item label={label} value={value} />;
@@ -80,11 +83,11 @@ export default function DynamicForm() {
   const [cities, setCities] = useState<City[]>([]);
   const [loadingStates, setLoadingStates] = useState(false);
   const [loadingCities, setLoadingCities] = useState(false);
-  const [selectedState, setSelectedState] = useState<string>('');
-  
-  const backgroundColor = useThemeColor({}, 'background');
-  const textColor = useThemeColor({}, 'text');
-  const tintColor = useThemeColor({}, 'tint');
+  const [selectedState, setSelectedState] = useState<string>("");
+
+  const backgroundColor = useThemeColor({}, "background");
+  const textColor = useThemeColor({}, "text");
+  const tintColor = useThemeColor({}, "tint");
 
   const {
     control,
@@ -105,7 +108,7 @@ export default function DynamicForm() {
     setImage,
   } = useImagePicker();
 
-  const watchedState = watch('state');
+  const watchedState = watch("state");
   useEffect(() => {
     loadStates();
     loadExistingUser();
@@ -115,22 +118,23 @@ export default function DynamicForm() {
     if (watchedState && watchedState !== selectedState) {
       setSelectedState(watchedState);
       loadCities(watchedState);
-      setValue('city', ''); // Reset city when state changes
+      setValue("city", ""); // Reset city when state changes
     }
   }, [watchedState, selectedState, setValue]);
 
   useEffect(() => {
     if (image) {
-      setValue('image', image);
+      setValue("image", image);
     }
   }, [image, setValue]);
 
   const loadStates = async () => {
-    setLoadingStates(true);    try {
+    setLoadingStates(true);
+    try {
       const statesData = await IBGEService.getStates();
       setStates(statesData);
     } catch {
-      Alert.alert('Erro', 'Não foi possível carregar os estados');
+      Alert.alert("Erro", "Não foi possível carregar os estados");
     } finally {
       setLoadingStates(false);
     }
@@ -138,13 +142,14 @@ export default function DynamicForm() {
 
   const loadCities = async (stateId: string) => {
     if (!stateId) return;
-    
+
     setLoadingCities(true);
     setCities([]);
-    try {      const citiesData = await IBGEService.getCitiesByState(stateId);
+    try {
+      const citiesData = await IBGEService.getCitiesByState(stateId);
       setCities(citiesData);
     } catch {
-      Alert.alert('Erro', 'Não foi possível carregar as cidades');
+      Alert.alert("Erro", "Não foi possível carregar as cidades");
     } finally {
       setLoadingCities(false);
     }
@@ -164,42 +169,39 @@ export default function DynamicForm() {
         }
       }
     } catch (error) {
-      console.error('Erro ao carregar dados existentes:', error);
+      console.error("Erro ao carregar dados existentes:", error);
     }
   };
 
   const onSubmit = async (data: UserFormData) => {
     try {
       await StorageService.saveUser(data);
-      Alert.alert(
-        'Sucesso',
-        'Dados salvos com sucesso!',
-        [
-          {
-            text: 'OK',
-            onPress: () => {
-              // Optionally navigate to user list or reset form
-            },
+      Alert.alert("Sucesso", "Dados salvos com sucesso!", [
+        {
+          text: "OK",
+          onPress: () => {
+            // Optionally navigate to user list or reset form
           },
-        ]      );
+        },
+      ]);
     } catch {
-      Alert.alert('Erro', 'Não foi possível salvar os dados');
+      Alert.alert("Erro", "Não foi possível salvar os dados");
     }
   };
 
   const clearForm = () => {
     Alert.alert(
-      'Limpar Formulário',
-      'Tem certeza que deseja limpar todos os dados?',
+      "Limpar Formulário",
+      "Tem certeza que deseja limpar todos os dados?",
       [
-        { text: 'Cancelar', style: 'cancel' },
+        { text: "Cancelar", style: "cancel" },
         {
-          text: 'Limpar',
-          style: 'destructive',
+          text: "Limpar",
+          style: "destructive",
           onPress: () => {
             reset();
             removeImage();
-            setSelectedState('');
+            setSelectedState("");
             setCities([]);
             StorageService.clearUserData();
           },
@@ -210,7 +212,9 @@ export default function DynamicForm() {
 
   return (
     <ScrollView style={[styles.container, { backgroundColor }]}>
-      <Text style={[styles.title, { color: textColor }]}>Cadastro de Usuário</Text>
+      <Text style={[styles.title, { color: textColor }]}>
+        Cadastro de Usuário
+      </Text>
 
       {/* Image Picker */}
       <View style={styles.imageContainer}>
@@ -219,7 +223,7 @@ export default function DynamicForm() {
           <View style={styles.imageWrapper}>
             <Image source={{ uri: image }} style={styles.profileImage} />
             <TouchableOpacity
-              style={[styles.removeImageButton, { backgroundColor: 'red' }]}
+              style={[styles.removeImageButton, { backgroundColor: "red" }]}
               onPress={removeImage}
             >
               <Text style={styles.removeImageText}>×</Text>
@@ -250,7 +254,10 @@ export default function DynamicForm() {
           name="name"
           render={({ field: { onChange, onBlur, value } }) => (
             <TextInput
-              style={[styles.input, { color: textColor, borderColor: errors.name ? 'red' : '#ccc' }]}
+              style={[
+                styles.input,
+                { color: textColor, borderColor: errors.name ? "red" : "#ccc" },
+              ]}
               onBlur={onBlur}
               onChangeText={onChange}
               value={value}
@@ -259,7 +266,9 @@ export default function DynamicForm() {
             />
           )}
         />
-        {errors.name && <Text style={styles.errorText}>{errors.name.message}</Text>}
+        {errors.name && (
+          <Text style={styles.errorText}>{errors.name.message}</Text>
+        )}
       </View>
 
       {/* Email Field */}
@@ -270,7 +279,13 @@ export default function DynamicForm() {
           name="email"
           render={({ field: { onChange, onBlur, value } }) => (
             <TextInput
-              style={[styles.input, { color: textColor, borderColor: errors.email ? 'red' : '#ccc' }]}
+              style={[
+                styles.input,
+                {
+                  color: textColor,
+                  borderColor: errors.email ? "red" : "#ccc",
+                },
+              ]}
               onBlur={onBlur}
               onChangeText={onChange}
               value={value}
@@ -281,7 +296,9 @@ export default function DynamicForm() {
             />
           )}
         />
-        {errors.email && <Text style={styles.errorText}>{errors.email.message}</Text>}
+        {errors.email && (
+          <Text style={styles.errorText}>{errors.email.message}</Text>
+        )}
       </View>
 
       {/* Phone Field */}
@@ -292,7 +309,13 @@ export default function DynamicForm() {
           name="phone"
           render={({ field: { onChange, onBlur, value } }) => (
             <TextInput
-              style={[styles.input, { color: textColor, borderColor: errors.phone ? 'red' : '#ccc' }]}
+              style={[
+                styles.input,
+                {
+                  color: textColor,
+                  borderColor: errors.phone ? "red" : "#ccc",
+                },
+              ]}
               onBlur={onBlur}
               onChangeText={onChange}
               value={value}
@@ -302,7 +325,9 @@ export default function DynamicForm() {
             />
           )}
         />
-        {errors.phone && <Text style={styles.errorText}>{errors.phone.message}</Text>}
+        {errors.phone && (
+          <Text style={styles.errorText}>{errors.phone.message}</Text>
+        )}
       </View>
 
       {/* State Field */}
@@ -311,13 +336,21 @@ export default function DynamicForm() {
         {loadingStates ? (
           <View style={styles.loadingContainer}>
             <ActivityIndicator color={tintColor} />
-            <Text style={[styles.loadingText, { color: textColor }]}>Carregando estados...</Text>
+            <Text style={[styles.loadingText, { color: textColor }]}>
+              Carregando estados...
+            </Text>
           </View>
-        ) : (          <Controller
+        ) : (
+          <Controller
             control={control}
             name="state"
             render={({ field: { onChange, value } }) => (
-              <View style={[styles.pickerContainer, { borderColor: errors.state ? 'red' : '#ccc' }]}>
+              <View
+                style={[
+                  styles.pickerContainer,
+                  { borderColor: errors.state ? "red" : "#ccc" },
+                ]}
+              >
                 <ConditionalPicker
                   selectedValue={value}
                   onValueChange={(val) => onChange(val)}
@@ -325,10 +358,10 @@ export default function DynamicForm() {
                 >
                   <ConditionalPickerItem label="Selecione um estado" value="" />
                   {states.map((state) => (
-                    <ConditionalPickerItem 
-                      key={state.id} 
-                      label={state.nome} 
-                      value={state.id.toString()} 
+                    <ConditionalPickerItem
+                      key={state.id}
+                      label={state.nome}
+                      value={state.id.toString()}
                     />
                   ))}
                 </ConditionalPicker>
@@ -336,7 +369,9 @@ export default function DynamicForm() {
             )}
           />
         )}
-        {errors.state && <Text style={styles.errorText}>{errors.state.message}</Text>}
+        {errors.state && (
+          <Text style={styles.errorText}>{errors.state.message}</Text>
+        )}
       </View>
 
       {/* City Field */}
@@ -345,25 +380,36 @@ export default function DynamicForm() {
         {loadingCities ? (
           <View style={styles.loadingContainer}>
             <ActivityIndicator color={tintColor} />
-            <Text style={[styles.loadingText, { color: textColor }]}>Carregando cidades...</Text>
+            <Text style={[styles.loadingText, { color: textColor }]}>
+              Carregando cidades...
+            </Text>
           </View>
-        ) : (          <Controller
+        ) : (
+          <Controller
             control={control}
             name="city"
             render={({ field: { onChange, value } }) => (
-              <View style={[styles.pickerContainer, { borderColor: errors.city ? 'red' : '#ccc' }]}>
+              <View
+                style={[
+                  styles.pickerContainer,
+                  { borderColor: errors.city ? "red" : "#ccc" },
+                ]}
+              >
                 <ConditionalPicker
                   selectedValue={value}
                   onValueChange={(val) => onChange(val)}
                   textColor={textColor}
                   enabled={cities.length > 0}
                 >
-                  <ConditionalPickerItem label="Selecione uma cidade" value="" />
+                  <ConditionalPickerItem
+                    label="Selecione uma cidade"
+                    value=""
+                  />
                   {cities.map((city) => (
-                    <ConditionalPickerItem 
-                      key={city.id} 
-                      label={city.nome} 
-                      value={city.id.toString()} 
+                    <ConditionalPickerItem
+                      key={city.id}
+                      label={city.nome}
+                      value={city.id.toString()}
                     />
                   ))}
                 </ConditionalPicker>
@@ -371,13 +417,19 @@ export default function DynamicForm() {
             )}
           />
         )}
-        {errors.city && <Text style={styles.errorText}>{errors.city.message}</Text>}
+        {errors.city && (
+          <Text style={styles.errorText}>{errors.city.message}</Text>
+        )}
       </View>
 
       {/* Buttons */}
       <View style={styles.buttonContainer}>
         <TouchableOpacity
-          style={[styles.button, styles.submitButton, { backgroundColor: tintColor }]}
+          style={[
+            styles.button,
+            styles.submitButton,
+            { backgroundColor: tintColor },
+          ]}
           onPress={handleSubmit(onSubmit)}
           disabled={isSubmitting}
         >
@@ -393,7 +445,7 @@ export default function DynamicForm() {
           onPress={clearForm}
           disabled={isSubmitting}
         >
-          <Text style={[styles.buttonText, { color: 'red' }]}>Limpar</Text>
+          <Text style={[styles.buttonText, { color: "red" }]}>Limpar</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>
@@ -407,8 +459,8 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 24,
-    fontWeight: 'bold',
-    textAlign: 'center',
+    fontWeight: "bold",
+    textAlign: "center",
     marginBottom: 30,
   },
   fieldContainer: {
@@ -416,7 +468,7 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
     marginBottom: 8,
   },
   input: {
@@ -424,24 +476,24 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 12,
     fontSize: 16,
-    backgroundColor: 'transparent',
+    backgroundColor: "transparent",
   },
   pickerContainer: {
     borderWidth: 1,
     borderRadius: 8,
-    backgroundColor: 'transparent',
+    backgroundColor: "transparent",
   },
   picker: {
     height: 50,
   },
   errorText: {
-    color: 'red',
+    color: "red",
     fontSize: 14,
     marginTop: 4,
   },
   loadingContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     padding: 12,
   },
   loadingText: {
@@ -449,11 +501,11 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   imageContainer: {
-    alignItems: 'center',
+    alignItems: "center",
     marginBottom: 20,
   },
   imageWrapper: {
-    position: 'relative',
+    position: "relative",
   },
   profileImage: {
     width: 120,
@@ -462,33 +514,33 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   removeImageButton: {
-    position: 'absolute',
+    position: "absolute",
     top: 5,
     right: 5,
     width: 30,
     height: 30,
     borderRadius: 15,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   removeImageText: {
-    color: 'white',
+    color: "white",
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   imagePlaceholder: {
     width: 120,
     height: 120,
     borderRadius: 60,
     borderWidth: 2,
-    borderStyle: 'dashed',
-    justifyContent: 'center',
-    alignItems: 'center',
+    borderStyle: "dashed",
+    justifyContent: "center",
+    alignItems: "center",
     marginTop: 10,
   },
   imagePlaceholderText: {
     fontSize: 14,
-    textAlign: 'center',
+    textAlign: "center",
     paddingHorizontal: 10,
   },
   buttonContainer: {
@@ -499,19 +551,19 @@ const styles = StyleSheet.create({
   button: {
     padding: 15,
     borderRadius: 8,
-    alignItems: 'center',
+    alignItems: "center",
   },
   submitButton: {
-    backgroundColor: '#007AFF',
+    backgroundColor: "#007AFF",
   },
   clearButton: {
-    backgroundColor: 'transparent',
+    backgroundColor: "transparent",
     borderWidth: 1,
-    borderColor: 'red',
+    borderColor: "red",
   },
   buttonText: {
-    color: 'white',
+    color: "white",
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
   },
 });
