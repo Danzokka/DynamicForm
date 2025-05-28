@@ -9,15 +9,71 @@ import {
   Alert,
   ActivityIndicator,
   Image,
+  Platform,
 } from 'react-native';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Picker } from '@react-native-picker/picker';
+import { Picker, PickerIOS } from '@react-native-picker/picker';
 import { userFormSchema, UserFormData } from '@/schemas/userSchema';
 import { IBGEService, State, City } from '@/services/ibgeService';
 import { StorageService } from '@/services/storageService';
 import { useImagePicker } from '@/hooks/useImagePicker';
 import { useThemeColor } from '@/hooks/useThemeColor';
+
+interface ConditionalPickerProps {
+  selectedValue: string;
+  onValueChange: (value: string, index: number) => void;
+  textColor: string;
+  children: React.ReactNode;
+  enabled?: boolean;
+}
+
+const ConditionalPicker: React.FC<ConditionalPickerProps> = ({
+  selectedValue,
+  onValueChange,
+  textColor,
+  children,
+  enabled = true,
+}) => {
+  const handleValueChange = (itemValue: any, itemIndex: number) => {
+    onValueChange(String(itemValue), itemIndex);
+  };
+
+  if (Platform.OS === 'ios') {
+    return (
+      <PickerIOS
+        selectedValue={selectedValue}
+        onValueChange={handleValueChange}
+        style={[{ color: textColor, minHeight: 120 }]}
+      >
+        {children}
+      </PickerIOS>
+    );
+  }
+
+  return (
+    <Picker
+      selectedValue={selectedValue}
+      onValueChange={handleValueChange}
+      style={[{ color: textColor }]}
+      enabled={enabled}
+    >
+      {children}
+    </Picker>
+  );
+};
+
+interface ConditionalPickerItemProps {
+  label: string;
+  value: string;
+}
+
+const ConditionalPickerItem: React.FC<ConditionalPickerItemProps> = ({ label, value }) => {
+  if (Platform.OS === 'ios') {
+    return <PickerIOS.Item label={label} value={value} />;
+  }
+  return <Picker.Item label={label} value={value} />;
+};
 
 export default function DynamicForm() {
   const [states, setStates] = useState<State[]>([]);
@@ -50,11 +106,10 @@ export default function DynamicForm() {
   } = useImagePicker();
 
   const watchedState = watch('state');
-
   useEffect(() => {
     loadStates();
     loadExistingUser();
-  }, []);
+  }, [loadExistingUser]);
 
   useEffect(() => {
     if (watchedState && watchedState !== selectedState) {
@@ -71,11 +126,10 @@ export default function DynamicForm() {
   }, [image, setValue]);
 
   const loadStates = async () => {
-    setLoadingStates(true);
-    try {
+    setLoadingStates(true);    try {
       const statesData = await IBGEService.getStates();
       setStates(statesData);
-    } catch (error) {
+    } catch {
       Alert.alert('Erro', 'Não foi possível carregar os estados');
     } finally {
       setLoadingStates(false);
@@ -87,10 +141,9 @@ export default function DynamicForm() {
     
     setLoadingCities(true);
     setCities([]);
-    try {
-      const citiesData = await IBGEService.getCitiesByState(stateId);
+    try {      const citiesData = await IBGEService.getCitiesByState(stateId);
       setCities(citiesData);
-    } catch (error) {
+    } catch {
       Alert.alert('Erro', 'Não foi possível carregar as cidades');
     } finally {
       setLoadingCities(false);
@@ -128,9 +181,8 @@ export default function DynamicForm() {
               // Optionally navigate to user list or reset form
             },
           },
-        ]
-      );
-    } catch (error) {
+        ]      );
+    } catch {
       Alert.alert('Erro', 'Não foi possível salvar os dados');
     }
   };
@@ -261,22 +313,25 @@ export default function DynamicForm() {
             <ActivityIndicator color={tintColor} />
             <Text style={[styles.loadingText, { color: textColor }]}>Carregando estados...</Text>
           </View>
-        ) : (
-          <Controller
+        ) : (          <Controller
             control={control}
             name="state"
             render={({ field: { onChange, value } }) => (
               <View style={[styles.pickerContainer, { borderColor: errors.state ? 'red' : '#ccc' }]}>
-                <Picker
+                <ConditionalPicker
                   selectedValue={value}
-                  onValueChange={onChange}
-                  style={[styles.picker, { color: textColor }]}
+                  onValueChange={(val) => onChange(val)}
+                  textColor={textColor}
                 >
-                  <Picker.Item label="Selecione um estado" value="" />
+                  <ConditionalPickerItem label="Selecione um estado" value="" />
                   {states.map((state) => (
-                    <Picker.Item key={state.id} label={state.nome} value={state.id.toString()} />
+                    <ConditionalPickerItem 
+                      key={state.id} 
+                      label={state.nome} 
+                      value={state.id.toString()} 
+                    />
                   ))}
-                </Picker>
+                </ConditionalPicker>
               </View>
             )}
           />
@@ -292,23 +347,26 @@ export default function DynamicForm() {
             <ActivityIndicator color={tintColor} />
             <Text style={[styles.loadingText, { color: textColor }]}>Carregando cidades...</Text>
           </View>
-        ) : (
-          <Controller
+        ) : (          <Controller
             control={control}
             name="city"
             render={({ field: { onChange, value } }) => (
               <View style={[styles.pickerContainer, { borderColor: errors.city ? 'red' : '#ccc' }]}>
-                <Picker
+                <ConditionalPicker
                   selectedValue={value}
-                  onValueChange={onChange}
-                  style={[styles.picker, { color: textColor }]}
+                  onValueChange={(val) => onChange(val)}
+                  textColor={textColor}
                   enabled={cities.length > 0}
                 >
-                  <Picker.Item label="Selecione uma cidade" value="" />
+                  <ConditionalPickerItem label="Selecione uma cidade" value="" />
                   {cities.map((city) => (
-                    <Picker.Item key={city.id} label={city.nome} value={city.id.toString()} />
+                    <ConditionalPickerItem 
+                      key={city.id} 
+                      label={city.nome} 
+                      value={city.id.toString()} 
+                    />
                   ))}
-                </Picker>
+                </ConditionalPicker>
               </View>
             )}
           />
